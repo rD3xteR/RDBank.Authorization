@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Ваше имя",
+  "classifications": [
+    "Web",
+    "API",
+    "REST",
+    "Clean Architecture",
+    "C#10",
+    "Solution"
+  ],
+  "identity": "MyRestApiTemplate",
+  "name": "REST API Solution Template with Clean Architecture",
+  "shortName": "restapi-solution",
+  "type": "solution",
+  "sourceName": "ProjectName",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "symbols": {
+    "Framework": {
+      "type": "parameter",
+      "description": "Target framework",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net10.0",
+          "description": "Target .NET 10.0"
+        }
+      ],
+      "defaultValue": "net10.0",
+      "replaces": "net10.0"
+    },
+    "EnableMassTransit": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Enable MassTransit for messaging",
+      "defaultValue": "false"
+    },
+    "EnableSwagger": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Enable Swagger/OpenAPI",
+      "defaultValue": "true"
+    },
+    "DatabaseProvider": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "SqlServer",
+          "description": "Use Microsoft SQL Server"
+        },
+        {
+          "choice": "PostgreSQL",
+          "description": "Use PostgreSQL"
+        },
+        {
+          "choice": "SQLite",
+          "description": "Use SQLite for development"
+        }
+      ],
+      "defaultValue": "SqlServer"
+    },
+    "UseMinimalAPIs": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Use Minimal APIs instead of controllers",
+      "defaultValue": "true"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(relativePath.EndsWith('.csproj') || relativePath.EndsWith('.sln'))",
+          "rename": {
+            "ProjectName.API.csproj": "[projectName].API.csproj",
+            "ProjectName.Domain.csproj": "[projectName].Domain.csproj",
+            "ProjectName.Infrastructure.csproj": "[projectName].Infrastructure.csproj",
+            "ProjectName.Common.csproj": "[projectName].Common.csproj",
+            "ProjectName.UnitTests.csproj": "[projectName].UnitTests.csproj",
+            "ProjectName.IntegrationTests.csproj": "[projectName].IntegrationTests.csproj"
+          }
+        }
+      ]
+    }
+  ],
+  "primaryOutputs": [
+    { "path": "src/[projectName].API" },
+    { "path": "src/[projectName].Domain" },
+    { "path": "src/[projectName].Infrastructure" },
+    { "path": "src/[projectName].Common" },
+    { "path": "tests/[projectName].UnitTests" },
+    { "path": "tests/[projectName].IntegrationTests" }
+  ],
+  "postActions": [
+    {
+      "actionId": "84C0DA21-51C8-4541-9940-6CA19AF04EE6",
+      "description": "Create solution file and add projects",
+      "manualInstructions": [],
+      "continueOnError": false,
+      "args": {
+        "primaryOutputIndex": 0
+      }
+    },
+    {
+      "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",
+      "description": "Add reference from API to Domain",
+      "manualInstructions": [],
+      "continueOnError": true,
+      "args": {
+        "project": "src/[projectName].API/[projectName].API.csproj",
+        "target": "src/[projectName].Domain/[projectName].Domain.csproj"
+      }
+    },
+    {
+      "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",
+      "description": "Add reference from API to Infrastructure",
+      "condition": "(!UseMinimalAPIs)",
+      "manualInstructions": [],
+      "continueOnError": true,
+      "args": {
+        "project": "src/[projectName].API/[projectName].API.csproj",
+        "target": "src/[projectName].Infrastructure/[projectName].Infrastructure.csproj"
+      }
+    }
+    // Добавьте остальные postActions для ссылок
+  ]
+}

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src\Api\Api.csproj" />
+  <Project Path="src\Core\Core.csproj" />
+  <Project Path="tests\Tests\Tests.csproj" />
+</Solution>
