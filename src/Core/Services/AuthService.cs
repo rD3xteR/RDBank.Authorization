@@ -5,6 +5,8 @@ using Core.Dal;
 using Core.Dal.Models;
 using Core.Dto;
 using Core.Dto.Auth;
+using Core.Dto.Register;
+using Core.Exceptions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -12,64 +14,40 @@ namespace Core.Services;
 
 public class AuthService(AuthDbContext dbContext, IJwtService jwtService, IMapper mapper) : IAuthService
 {
-    private static readonly UserResponse s_mockUserProfile = new()
-    {
-        Id = Guid.NewGuid(),
-        Name = "Иван Петров",
-        Email = "mockuser@rdbank.com",
-        Products = new List<Product>()
-        {
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Name = "Дебетовая карта",
-                Type = "card",
-                Balance = Convert.ToDecimal("45230.5"),
-                Number = "**** **** **** 4521",
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Name = "Сберегательный счет",
-                Type = "account",
-                Balance = Convert.ToDecimal("80200.0"),
-                Number = "40817810123456789012",
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Name = "Депозит \"Прибыль\"",
-                Type = "deposit",
-                Balance = Convert.ToDecimal("150000.0"),
-                Number = "42301810987654321098",
-            }
-        }
-    };
-
     public async Task<LoginResponse> LoginAsync(LoginRequest loginRequest)
     {
-        var user = await AuthUserAsync(loginRequest);
-
-        return new LoginResponse
-        {
-            Token = jwtService.GetToken(user.Id, loginRequest.Email),
-            User = mapper.Map<UserResponse>(user),
-        };
+        var userId = await AuthUserAsync(loginRequest);
+        return new LoginResponse { Success = true, Token = jwtService.GetToken(userId, loginRequest.Email) };
     }
 
-    public Task<LoginResponse> Register(LoginRequest loginRequest) => throw new NotImplementedException();
+    public async Task<LoginResponse> RegisterAsync(RegisterRequest registerRequest)
+    {
+        var newUser = mapper.Map<User>(registerRequest);
+        newUser.Profile.UserId = newUser.Id;
+        newUser.Password = GetHashedPassword(registerRequest.Password);
 
-    private async Task<User> AuthUserAsync(LoginRequest loginRequest)
+        var users = dbContext.Users;
+        users.Add(newUser);
+        await dbContext.SaveChangesAsync();
+
+        return new LoginResponse { Token = jwtService.GetToken(newUser.Id, newUser.Email) };
+    }
+
+    private async Task<Guid> AuthUserAsync(LoginRequest loginRequest)
     {
         var user = await dbContext.Users
+            .AsNoTracking()
             .Include(u => u.Profile)
             .Where(u => u.Email == loginRequest.Email)
             .FirstOrDefaultAsync();
 
-        if (user is null || user.Password != loginRequest.Password)
-            // TODO: Add normal exception
-            throw new NotImplementedException();
+        var hashedPassword = GetHashedPassword(loginRequest.Password);
+        if (user is null || user.Password != hashedPassword)
+            throw new UnauthorizedException("User or password doesn't match");
 
-        return user;
+        return user.Id;
     }
+
+    private string GetHashedPassword(string password) =>
+        Convert.ToBase64String(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(password)));
 }

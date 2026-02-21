@@ -2,8 +2,9 @@
 
 public class UserProfile
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     public DateTime? Birthday { get; set; }
     public string? Phone { get; set; }
 

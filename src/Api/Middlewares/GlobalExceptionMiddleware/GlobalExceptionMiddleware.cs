@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.Json;
 
+using Core.Exceptions;
+
 namespace Api.Middlewares.GlobalExceptionMiddleware;
 
 public static class GlobalExceptionMiddlewareExtensions
