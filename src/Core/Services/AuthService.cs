@@ -30,7 +30,7 @@ public class AuthService(AuthDbContext dbContext, IJwtService jwtService, IMappe
         users.Add(newUser);
         await dbContext.SaveChangesAsync();
 
-        return new LoginResponse { Token = jwtService.GetToken(newUser.Id, newUser.Email) };
+        return new LoginResponse { Success = true, Token = jwtService.GetToken(newUser.Id, newUser.Email) };
     }
 
     private async Task<Guid> AuthUserAsync(LoginRequest loginRequest)

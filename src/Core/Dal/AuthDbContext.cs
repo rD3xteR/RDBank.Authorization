@@ -8,10 +8,10 @@ public class AuthDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
-    public DbSet<Product> Products { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema("auth");
         modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("users");
@@ -23,14 +23,40 @@ public class AuthDbContext(DbContextOptions options) : DbContext(options)
                 .WithOne(p => p.User)
                 .HasForeignKey<UserProfile>(p => p.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity
+                .Property(e => e.Id)
+                .HasColumnName("id");
+            entity
+                .Property(e => e.Email)
+                .HasColumnName("email");
+            entity
+                .Property(e => e.Password)
+                .HasColumnName("password");
         });
 
-        modelBuilder.Entity<UserProfile>()
-            .ToTable("user_profiles")
-            .HasKey(x => x.Id);
+        modelBuilder.Entity<UserProfile>(entity =>
+        {
+            entity.ToTable("user_profiles");
 
-        modelBuilder.Entity<Product>()
-            .ToTable("products")
-            .HasKey(x => x.Id);
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(e => e.UserId);
+
+            entity
+                .Property(e => e.Id)
+                .HasColumnName("id");
+            entity
+                .Property(e => e.FirstName)
+                .HasColumnName("first_name");
+            entity
+                .Property(e => e.LastName)
+                .HasColumnName("last_name");
+            entity
+                .Property(e => e.Birthday)
+                .HasColumnName("birthday");
+            entity
+                .Property(e => e.Phone)
+                .HasColumnName("phone");
+        });
     }
 }

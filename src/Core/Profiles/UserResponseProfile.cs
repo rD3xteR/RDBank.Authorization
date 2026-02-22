@@ -10,21 +10,17 @@ public class UserResponseProfile : Profile
 {
     public UserResponseProfile()
     {
-        CreateMap<User, UserResponse>()
-            .ForMember(dest => dest.Email,
-                opt => opt.MapFrom(src => src.Email))
+        CreateMap<UserProfile, UserResponse>()
             .ForMember(dest => dest.Id,
-                opt => opt.MapFrom(src => src.Id))
+                opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.FirstName,
-                opt => opt.MapFrom(src => src.Profile.FirstName))
+                opt => opt.MapFrom(src => src.FirstName))
             .ForMember(dest => dest.LastName,
-                opt => opt.MapFrom(src => src.Profile.LastName))
+                opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.Birthday,
-                opt => opt.MapFrom(src => src.Profile.Birthday))
+                opt => opt.MapFrom(src => src.Birthday))
             .ForMember(dest => dest.Phone,
-                opt => opt.MapFrom(src => src.Profile.Phone))
-            .ForMember(dest => dest.Products,
-                opt => opt.MapFrom(src => src.Profile.Products));
+                opt => opt.MapFrom(src => src.Phone));
 
         CreateMap<RegisterRequest, User>()
             .ForMember(dest => dest.Profile,

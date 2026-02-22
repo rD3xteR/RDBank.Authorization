@@ -4,6 +4,7 @@ using Api.Configuration.Routing;
 
 using Core.Abstractions;
 using Core.Dto;
+using Core.Exceptions;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -13,15 +14,14 @@ public abstract class GetUser : IEndpointsRegister
 {
     public static void Map(IEndpointRouteBuilder app) => app.MapGet("/user/profile", HandleGetUser).RequireAuthorization();
 
-    private class Dto
-    {
-        public string? UserId { get; set; }
-        public string? Email { get; set; }
-    }
-
     private static async Task<Ok<UserResponse>> HandleGetUser(ClaimsPrincipal token, IUserService userService)
     {
         var id = token.FindFirstValue(ClaimTypes.NameIdentifier);
-        return TypedResults.Ok(await userService.GetUserAsync(id));
+        var email = token.FindFirstValue(ClaimTypes.Email);
+
+        if (id is null || email is null)
+            throw new UnauthorizedException("Not found user");
+
+        return TypedResults.Ok(await userService.GetUserAsync(id, email));
     }
 }
