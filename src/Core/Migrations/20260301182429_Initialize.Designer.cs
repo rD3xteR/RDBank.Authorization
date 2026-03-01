@@ -12,14 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Core.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260222104508_ToColumnsAndIndexes")]
-    partial class ToColumnsAndIndexes
+    [Migration("20260301182429_Initialize")]
+    partial class Initialize
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("auth")
                 .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -47,7 +48,7 @@ namespace Core.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users", "auth");
                 });
 
             modelBuilder.Entity("Core.Dal.Models.UserProfile", b =>
@@ -57,8 +58,8 @@ namespace Core.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly>("Birthday")
+                        .HasColumnType("date")
                         .HasColumnName("birthday");
 
                     b.Property<string>("FirstName")
@@ -71,9 +72,20 @@ namespace Core.Migrations
                         .HasColumnType("text")
                         .HasColumnName("last_name");
 
+                    b.Property<string>("PassportNumber")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("passport_number");
+
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("phone");
+
+                    b.Property<string>("RegistrationAddress")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("registration_address");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -83,7 +95,7 @@ namespace Core.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("user_profiles", (string)null);
+                    b.ToTable("user_profiles", "auth");
                 });
 
             modelBuilder.Entity("Core.Dal.Models.UserProfile", b =>

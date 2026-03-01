@@ -22,6 +22,11 @@ public class AuthService(AuthDbContext dbContext, IJwtService jwtService, IMappe
 
     public async Task<LoginResponse> RegisterAsync(RegisterRequest registerRequest)
     {
+        var emailExists = await dbContext.Users
+            .AnyAsync(e => e.Email == registerRequest.Email);
+        if (emailExists)
+            throw new ConflictException("email already exists");
+
         var newUser = mapper.Map<User>(registerRequest);
         newUser.Profile.UserId = newUser.Id;
         newUser.Password = GetHashedPassword(registerRequest.Password);

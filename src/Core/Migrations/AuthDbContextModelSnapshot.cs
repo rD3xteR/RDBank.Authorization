@@ -55,8 +55,8 @@ namespace Core.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly>("Birthday")
+                        .HasColumnType("date")
                         .HasColumnName("birthday");
 
                     b.Property<string>("FirstName")
@@ -69,9 +69,20 @@ namespace Core.Migrations
                         .HasColumnType("text")
                         .HasColumnName("last_name");
 
+                    b.Property<string>("PassportNumber")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("passport_number");
+
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("phone");
+
+                    b.Property<string>("RegistrationAddress")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("registration_address");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

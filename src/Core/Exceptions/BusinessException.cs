@@ -1,10 +1,11 @@
 using System.Net;
+using System.Text.Json;
 
 namespace Core.Exceptions;
 
-public class BusinessException(string message, string errorCode, Exception? innerException = null) : Exception(message, innerException)
+public class BusinessException(string message, Exception? innerException = null) : Exception(message, innerException)
 {
-    public string ErrorCode { get; init; } = errorCode;
+    public string ErrorCode => JsonNamingPolicy.SnakeCaseLower.ConvertName(StatusCode.ToString());
 
     public virtual HttpStatusCode StatusCode { get; init; } = HttpStatusCode.InternalServerError;
 

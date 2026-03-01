@@ -57,6 +57,12 @@ public class AuthDbContext(DbContextOptions options) : DbContext(options)
             entity
                 .Property(e => e.Phone)
                 .HasColumnName("phone");
+            entity
+                .Property(e => e.PassportNumber)
+                .HasColumnName("passport_number");
+            entity
+                .Property(e => e.RegistrationAddress)
+                .HasColumnName("registration_address");
         });
     }
 }

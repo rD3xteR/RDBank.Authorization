@@ -6,5 +6,8 @@ public class RegisterRequest
     public required string LastName { get; set; }
     public required string Email { get; set; }
     public required string Phone { get; set; }
+    public required DateOnly Birthday { get; set; }
+    public required string PassportNumber { get; set; }
+    public required string RegistrationAddress { get; set; }
     public required string Password { get; set; }
 }

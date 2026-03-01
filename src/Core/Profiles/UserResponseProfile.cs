@@ -20,7 +20,11 @@ public class UserResponseProfile : Profile
             .ForMember(dest => dest.Birthday,
                 opt => opt.MapFrom(src => src.Birthday))
             .ForMember(dest => dest.Phone,
-                opt => opt.MapFrom(src => src.Phone));
+                opt => opt.MapFrom(src => src.Phone))
+            .ForMember(dest => dest.Passport,
+                opt => opt.MapFrom(src => src.PassportNumber))
+            .ForMember(dest => dest.Address,
+                opt => opt.MapFrom(src => src.RegistrationAddress));
 
         CreateMap<RegisterRequest, User>()
             .ForMember(dest => dest.Profile,
@@ -28,7 +32,10 @@ public class UserResponseProfile : Profile
                 {
                     FirstName = src.FirstName,
                     LastName = src.LastName,
-                    Phone = src.Phone
+                    Phone = src.Phone,
+                    Birthday = src.Birthday,
+                    PassportNumber = src.PassportNumber,
+                    RegistrationAddress = src.RegistrationAddress,
                 }))
             .ForMember(dest => dest.Email,
                 opt => opt.MapFrom(src => src.Email));
