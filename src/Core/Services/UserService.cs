@@ -18,6 +18,7 @@ public class UserService(AuthDbContext dbContext, IMapper mapper) : IUserService
             throw new UnauthorizedException("An error occured while trying to get the user id");
 
         var user = await dbContext.UserProfiles
+            .AsNoTracking()
             .FirstOrDefaultAsync(u => u.UserId == id);
 
         var result = mapper.Map<UserResponse>(user);

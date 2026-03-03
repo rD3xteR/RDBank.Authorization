@@ -40,7 +40,9 @@ public class AuthDbContext(DbContextOptions options) : DbContext(options)
             entity.ToTable("user_profiles");
 
             entity.HasKey(x => x.Id);
+
             entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.Phone);
 
             entity
                 .Property(e => e.Id)
@@ -63,6 +65,9 @@ public class AuthDbContext(DbContextOptions options) : DbContext(options)
             entity
                 .Property(e => e.RegistrationAddress)
                 .HasColumnName("registration_address");
+            entity
+                .Property(e => e.UserId)
+                .HasColumnName("user_id");
         });
     }
 }

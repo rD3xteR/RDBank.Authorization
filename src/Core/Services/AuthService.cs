@@ -31,8 +31,7 @@ public class AuthService(AuthDbContext dbContext, IJwtService jwtService, IMappe
         newUser.Profile.UserId = newUser.Id;
         newUser.Password = GetHashedPassword(registerRequest.Password);
 
-        var users = dbContext.Users;
-        users.Add(newUser);
+        await dbContext.Users.AddAsync(newUser);
         await dbContext.SaveChangesAsync();
 
         return new LoginResponse { Success = true, Token = jwtService.GetToken(newUser.Id, newUser.Email) };
